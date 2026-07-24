@@ -1,8 +1,22 @@
 [
   {
-    "id": "sample-loop",
-    "name": "Sample Loop (replace me)",
-    "file": "sample-loop.gpx",
-    "description": "Placeholder route — swap in your Garmin exports"
+    "id": "saturday-4",
+    "name": "Saturday Run — 4 Mile Loop",
+    "file": "saturday-4-mile.gpx"
+  },
+  {
+    "id": "saturday-6",
+    "name": "Saturday Run — 6 Mile Loop",
+    "file": "saturday-6-mile.gpx"
+  },
+  {
+    "id": "saturday-8",
+    "name": "Saturday Run — 8 Mile Loop",
+    "file": "saturday-8-mile.gpx"
+  },
+  {
+    "id": "saturday-10",
+    "name": "Saturday Run — 10 Mile Loop",
+    "file": "saturday-10-mile.gpx"
   }
 ]
