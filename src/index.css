@@ -1,0 +1,164 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #1a1a2e;
+  color: #e8e8f0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.screen-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* ---------- Route list ---------- */
+
+.route-list {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.list-header {
+  padding: 8px 4px 12px;
+}
+
+.list-header h1 {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+}
+
+.list-header p {
+  color: #a0a0b8;
+  font-size: 0.95rem;
+}
+
+.route-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 16px;
+  border: 1px solid #33334d;
+  border-radius: 12px;
+  background: #24243a;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.route-card:active {
+  background: #2e2e4a;
+}
+
+.route-name {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.route-meta {
+  color: #a0a0b8;
+  font-size: 0.9rem;
+}
+
+/* ---------- Map screen ---------- */
+
+.map-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.map-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  background: #1a1a2e;
+}
+
+.back-button {
+  border: 1px solid #33334d;
+  border-radius: 10px;
+  background: #24243a;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.map-title {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.map-title .route-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.map {
+  flex: 1;
+  min-height: 0;
+}
+
+.geo-error {
+  padding: 10px 14px;
+  background: #7f1d1d;
+  color: #fecaca;
+  font-size: 0.9rem;
+}
+
+.map-controls {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  background: #1a1a2e;
+}
+
+.control-button {
+  flex: 1;
+  padding: 14px;
+  border: 1px solid #33334d;
+  border-radius: 12px;
+  background: #24243a;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.control-button.primary {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  color: #fff;
+}
+
+.control-button:active {
+  opacity: 0.85;
+}
