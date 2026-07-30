@@ -1,22 +1,26 @@
 [
   {
     "id": "saturday-4",
-    "name": "Saturday Run — 4 Mile Loop",
-    "file": "saturday-4-mile.gpx"
+    "name": "4 Mile Loop",
+    "file": "saturday-4-mile.gpx",
+    "day": "Saturday"
   },
   {
     "id": "saturday-6",
-    "name": "Saturday Run — 6 Mile Loop",
-    "file": "saturday-6-mile.gpx"
+    "name": "6 Mile Loop",
+    "file": "saturday-6-mile.gpx",
+    "day": "Saturday"
   },
   {
     "id": "saturday-8",
-    "name": "Saturday Run — 8 Mile Loop",
-    "file": "saturday-8-mile.gpx"
+    "name": "8 Mile Loop",
+    "file": "saturday-8-mile.gpx",
+    "day": "Saturday"
   },
   {
     "id": "saturday-10",
-    "name": "Saturday Run — 10 Mile Loop",
-    "file": "saturday-10-mile.gpx"
+    "name": "10 Mile Loop",
+    "file": "saturday-10-mile.gpx",
+    "day": "Saturday"
   }
 ]

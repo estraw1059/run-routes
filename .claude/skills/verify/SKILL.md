@@ -29,8 +29,21 @@ const ctx = await browser.newContext({
 })
 ```
 
+Grant `permissions: ['geolocation', 'clipboard-read', 'clipboard-write']` to
+test share/water-stop copy (headless has no `navigator.share`, so the app
+falls back to clipboard + "Link copied!" note).
+
 Flows worth driving:
+0. Day grouping: `.day-header` order rotates so today's run day is first
+   (`Today` badge); mock other days with `page.clock.install({ time })`.
+   Empty day groups show `.day-empty` "Routes coming soon".
 1. Route list renders `.route-card` with name + computed miles.
+1b. Share buttons (`.icon-button`): list copies the site URL, map screen
+   copies a `#route-id` deep link. Deep links open the route directly;
+   a bogus hash falls back to the list.
+1c. Water stops: while tracking, "Mark water" records GPS points (dashed
+   orange 💧 `.water-marker`); panel Copy puts `"waterStops": [...]` JSON on
+   the clipboard; routes.json `waterStops` render as solid blue 💧.
 2. Tap card → `.leaflet-container`; wait for `.leaflet-tile-loaded` count > 3;
    route polyline + start/finish markers = 3 `path.leaflet-interactive` elements.
 3. "Start tracking" → paths go 3 → 5 (accuracy circle + runner dot).

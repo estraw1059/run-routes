@@ -1,13 +1,30 @@
 import { useEffect, useRef, useState } from 'react'
+import L from 'leaflet'
 import {
   MapContainer,
   TileLayer,
   Polyline,
   CircleMarker,
   Circle,
+  Marker,
   useMap,
   useMapEvents,
 } from 'react-leaflet'
+import { shareLink, routeUrl } from './share.js'
+
+const waterIcon = L.divIcon({
+  className: 'water-marker',
+  html: '💧',
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+})
+
+const markedIcon = L.divIcon({
+  className: 'water-marker water-marker-new',
+  html: '💧',
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+})
 
 // Keeps the map centered on the runner while "follow" is on, and turns
 // follow off as soon as they drag the map to look around.
@@ -30,8 +47,15 @@ export default function RouteMap({ route, data, onBack }) {
   const [tracking, setTracking] = useState(false)
   const [follow, setFollow] = useState(false)
   const [geoError, setGeoError] = useState(null)
+  const [markedStops, setMarkedStops] = useState([])
+  const [toast, setToast] = useState(null)
   const watchIdRef = useRef(null)
   const wakeLockRef = useRef(null)
+
+  const showToast = (msg) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 2000)
+  }
 
   const startTracking = () => {
     if (!navigator.geolocation) {
@@ -95,6 +119,33 @@ export default function RouteMap({ route, data, onBack }) {
 
   useEffect(() => stopTracking, [])
 
+  const onShare = async () => {
+    const result = await shareLink(
+      `MRC — ${route.name} (${route.day})`,
+      routeUrl(route.id),
+    )
+    if (result === 'copied') showToast('Link copied!')
+  }
+
+  const markWater = () => {
+    if (!position) return
+    setMarkedStops((stops) => [
+      ...stops,
+      { lat: +position[0].toFixed(6), lng: +position[1].toFixed(6) },
+    ])
+  }
+
+  const copyMarkedStops = async () => {
+    const json = `"waterStops": ${JSON.stringify(markedStops)}`
+    try {
+      await navigator.clipboard.writeText(json)
+      showToast('Water stops copied!')
+    } catch {
+      // Clipboard can be unavailable (e.g. non-secure context); share instead.
+      shareLink('Water stops', json)
+    }
+  }
+
   const { points } = data
   const start = points[0]
   const finish = points[points.length - 1]
@@ -107,46 +158,72 @@ export default function RouteMap({ route, data, onBack }) {
         </button>
         <div className="map-title">
           <span className="route-name">{route.name}</span>
-          <span className="route-meta">{data.miles.toFixed(1)} mi</span>
+          <span className="route-meta">
+            {route.day} · {data.miles.toFixed(1)} mi
+          </span>
         </div>
+        <button className="icon-button" onClick={onShare} aria-label="Share this route">
+          ⇪
+        </button>
       </header>
 
       {geoError && <div className="geo-error">{geoError}</div>}
+      {toast && <div className="share-note">{toast}</div>}
 
       <MapContainer bounds={points} boundsOptions={{ padding: [30, 30] }} className="map">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Polyline positions={points} pathOptions={{ color: '#7c3aed', weight: 5, opacity: 0.85 }} />
+        <Polyline positions={points} pathOptions={{ color: '#2f7dd6', weight: 5, opacity: 0.85 }} />
         <CircleMarker
           center={start}
           radius={8}
-          pathOptions={{ color: '#fff', weight: 2, fillColor: '#16a34a', fillOpacity: 1 }}
+          pathOptions={{ color: '#fff', weight: 2, fillColor: '#75a244', fillOpacity: 1 }}
         />
         <CircleMarker
           center={finish}
           radius={8}
           pathOptions={{ color: '#fff', weight: 2, fillColor: '#dc2626', fillOpacity: 1 }}
         />
+        {(route.waterStops ?? []).map((stop, i) => (
+          <Marker key={`water-${i}`} position={[stop.lat, stop.lng]} icon={waterIcon} />
+        ))}
+        {markedStops.map((stop, i) => (
+          <Marker key={`marked-${i}`} position={[stop.lat, stop.lng]} icon={markedIcon} />
+        ))}
         {position && (
           <>
             {accuracy > 0 && (
               <Circle
                 center={position}
                 radius={accuracy}
-                pathOptions={{ color: '#2563eb', weight: 1, fillColor: '#2563eb', fillOpacity: 0.12 }}
+                pathOptions={{ color: '#d37e2c', weight: 1, fillColor: '#d37e2c', fillOpacity: 0.12 }}
               />
             )}
             <CircleMarker
               center={position}
               radius={9}
-              pathOptions={{ color: '#fff', weight: 3, fillColor: '#2563eb', fillOpacity: 1 }}
+              pathOptions={{ color: '#fff', weight: 3, fillColor: '#d37e2c', fillOpacity: 1 }}
             />
           </>
         )}
         <FollowController position={position} follow={follow} setFollow={setFollow} />
       </MapContainer>
+
+      {markedStops.length > 0 && (
+        <div className="water-panel">
+          <span>
+            💧 {markedStops.length} water stop{markedStops.length > 1 ? 's' : ''} marked
+          </span>
+          <button className="water-panel-button" onClick={copyMarkedStops}>
+            Copy
+          </button>
+          <button className="water-panel-button" onClick={() => setMarkedStops([])}>
+            Clear
+          </button>
+        </div>
+      )}
 
       <div className="map-controls">
         {!tracking ? (
@@ -158,7 +235,11 @@ export default function RouteMap({ route, data, onBack }) {
             <button className="control-button" onClick={stopTracking}>
               Stop
             </button>
-            {!follow && (
+            {follow ? (
+              <button className="control-button water" onClick={markWater} disabled={!position}>
+                💧 Mark water
+              </button>
+            ) : (
               <button className="control-button primary" onClick={() => setFollow(true)}>
                 Re-center on me
               </button>
